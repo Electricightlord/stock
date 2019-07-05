@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>history</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th>股票名称</th>
+        <th>股票id</th>
+        <th>开盘日期</th>
+        <th>开盘价格</th>
+        <th>收盘价格</th>
+        <th>最高价格</th>
+        <th>最低价格</th>
+        <th>总交易量</th>
+    </tr>
+    </thead>
+    <tr th:each="history:${pageInfo.list}">
+        <td th:text="${history.stockName}"></td>
+        <td th:text="${history.stockId}"></td>
+        <td th:text="${#dates.format(history.openingDate, 'yyyy-MM-dd')}"></td>
+        <td th:text="${history.openPrice}"></td>
+        <td th:text="${history.closePrice}"></td>
+        <td th:text="${history.maxPrice}"></td>
+        <td th:text="${history.minPrice}"></td>
+        <td th:text="${history.tradeAmount}"></td>
+    </tr>
+</table>
+
+<ul>
+    <li th:if="${pageInfo.hasPreviousPage}">
+        <a th:href="@{'/history/search/'+${stockId}+'/'+${pageInfo.pageSize}+'/'+${pageInfo.prePage}}" th:text="上一页"></a>
+    </li>
+    <li th:if="${pageInfo.hasNextPage}">
+        <a th:href="@{'/history/search/'+${stockId}+'/'+${pageInfo.pageSize}+'/'+${pageInfo.nextPage}}" th:text="下一页"></a>
+    </li>
+</ul>
+</body>
+</html>

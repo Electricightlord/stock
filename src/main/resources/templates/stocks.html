@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>所有股票信息查询</title>
+</head>
+<body>
+<table  border="1">
+    <tr th:each="stock:${stocks}">
+        <td th:text="${stock.stockName}"></td>
+        <td><a th:href="@{'/history/search/'+${stock.stockId}+'/10/1'} " th:text="${stock.stockId}"></a></td>
+    </tr>
+</table>
+</body>
+</html>

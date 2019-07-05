@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lihao.stock.mapper.HistoryMapper">
+    <insert id="insertHistorys" parameterType="list">
+        insert into history (stock_name,stock_id,opening_date,open_price,close_price,max_price,min_price,trade_amount)
+        values
+        <foreach collection="list" item="history" index="index" separator=",">
+            (#{history.stockName},#{history.stockId},#{history.openingDate},#{history.openPrice},#{history.closePrice},#{history.maxPrice},#{history.minPrice},#{history.tradeAmount})
+        </foreach>
+    </insert>
+
+    <resultMap id="historyObject"  type="com.lihao.stock.object.HistoryObject">
+        <id column="id" property="id"/>
+        <result column="stock_id" property="stockId"/>
+        <result column="stock_name" property="stockName"/>
+        <result column="opening_date" property="openingDate"/>
+        <result column="open_price" property="openPrice"/>
+        <result column="close_price" property="closePrice"/>
+        <result column="max_price" property="maxPrice"/>
+        <result column="min_price" property="minPrice"/>
+        <result column="trade_amount" property="tradeAmount"/>
+    </resultMap>
+
+    <select id="findByStockId" parameterType="string" resultMap="historyObject">
+        select * from history where stock_id=#{stockId} order by opening_date desc
+    </select>
+
+    <select id="getCount" resultType="map">
+        select count(stock_id) as totalCount,stock_id
+        from history
+        where (close_price - open_price)/open_price &gt; 0.01 and opening_date-curdate()&lt;30  group by stock_id;
+    </select>
+</mapper>

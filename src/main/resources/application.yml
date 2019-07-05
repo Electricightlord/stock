@@ -1,3 +1,35 @@
 server:
   servlet:
     context-path: /stock
+
+spring:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://127.0.0.1:3306/stock
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: 0
+    port: 6379
+    host: localhost
+    # 连接超时时间 单位 ms（毫秒）
+    timeout: 3000
+  thymeleaf:
+    cache: false
+    mode: html
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.lihao.stock.object
+logging:
+  level:
+    com:
+      lihao:
+        stock:
+          mapper: debug
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true

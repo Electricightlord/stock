@@ -1,5 +1,6 @@
 package com.lihao.stock;
 
+import com.lihao.stock.listener.ApplicationStartListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,7 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class StockApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(StockApplication.class, args);
+		SpringApplication springApplication=new SpringApplication(StockApplication.class);
+		springApplication.addListeners(new ApplicationStartListener());
+		springApplication.run(args);
 	}
 
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lihao.stock.mapper.StockMapper">
+    <insert id="insertStocks" parameterType="list">
+        insert into stock (stock_name, stock_id) values
+    <foreach collection="list" item="stock" index="index" separator=",">
+        (#{stock.stockName},#{stock.stockId})
+    </foreach>
+    </insert>
+
+    <resultMap id="stockMap" type="com.lihao.stock.object.StockObject">
+        <id column="id" property="id"/>
+        <result column="stock_id" property="stockId"/>
+        <result column="stock_name" property="stockName"/>
+    </resultMap>
+    <select id="getStocks" resultMap="stockMap">
+        select * from stock;
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(*) from stock;
+    </select>
+
+    <select id="getConcatIds" resultType="string">
+        select group_concat(stock_id) as concat_id from stock;
+    </select>
+</mapper>
