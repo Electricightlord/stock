@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>count</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th>股票id</th>
+        <th>次数</th>
+    </tr>
+    </thead>
+    <tr th:each="map:${mapList}">
+        <td th:text="${map.stock_id}"></td>
+        <td th:text="${map.totalCount}"></td>
+    </tr>
+</table>
+</body>
+</html>

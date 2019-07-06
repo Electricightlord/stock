@@ -28,6 +28,6 @@
     <select id="getCount" resultType="map">
         select count(stock_id) as totalCount,stock_id
         from history
-        where (close_price - open_price)/open_price &gt; 0.01 and opening_date-curdate()&lt;30  group by stock_id;
+        where (close_price - open_price)/open_price &gt; 0.05 and opening_date-curdate()&lt;30  group by stock_id;
     </select>
 </mapper>

@@ -38,8 +38,12 @@ public class HistoryController {
     }
 
     @GetMapping("/getCount")
-    public List<Map<String,Object>> getCount(){
-        return historyServiceImpl.getCount();
+    public ModelAndView getCount() {
+        List<Map<String,Object>> mapList = historyServiceImpl.getCount();
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("mapList",mapList);
+        modelAndView.setViewName("count");
+        return modelAndView;
     }
 
 }

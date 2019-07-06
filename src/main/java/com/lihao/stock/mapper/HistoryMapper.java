@@ -13,9 +13,8 @@ import java.util.Map;
 public interface HistoryMapper {
     void insertHistorys(List<HistoryObject> historyObjectList);
 
-//    @Cacheable(value = "history",key = "T(String).valueOf(#stockId).concat('::')+T(String).valueOf(#page).concat('::')+T(String).valueOf(#size)")
-    List<HistoryObject> findByStockId(String stockId,int page,int size);
+List<HistoryObject> findByStockId(String stockId,int page,int size);
 
-//    @Cacheable(value="history",key = "count")
+
     List<Map<String,Object>> getCount();
 }

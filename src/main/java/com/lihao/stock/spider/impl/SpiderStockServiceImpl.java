@@ -35,7 +35,7 @@ public class SpiderStockServiceImpl implements SpiderStockService {
         }
         if(stockObjectList.size()!=0) {
             stockService.insertStocks(stockObjectList);
-            redisTemplate.opsForValue().set("allStockCache",stockObjectList);
+            redisTemplate.opsForValue().set("allStock",stockObjectList);
             return true;
         }
         return false;
