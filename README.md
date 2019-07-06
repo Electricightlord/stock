@@ -22,3 +22,14 @@ http://{host}/stock/history/search/{stockId}/{size}/{page}  股票详情查看,�
 &nbsp;&nbsp;&nbsp;&nbsp;size:一次查询的数量
 
 &nbsp;&nbsp;&nbsp;&nbsp;page:当前页数
+
+##### 参数说明
+
+| 参数名 | 必选 | 类型   | 说明     | 备注                       |
+| ------ | ---- | ------ | -------- | -------------------------- |
+| update | 是   | String | 更新标志 | 0或者10代表不更新1代表更新 |
+
+##### 
+
+path:https://freegatty.swuosa.xenoeye.org/api/grade/all/0
+
