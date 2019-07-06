@@ -30,7 +30,6 @@ public class HistoryController {
     @GetMapping("/search/{stockId}/{size}/{page}")
     public ModelAndView search(@PathVariable("stockId") String stockId, @PathVariable(value = "size") int size, @PathVariable("page") int page){
         PageInfo<HistoryObject> pageInfo= historyServiceImpl.findByStockId(stockId,size,page);
-        System.out.println(pageInfo);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("pageInfo",pageInfo);
         modelAndView.addObject("stockId",stockId);

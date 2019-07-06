@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 @Service
 public class SpiderHistoryServiceImpl implements SpiderHistoryService {
 
@@ -40,10 +42,16 @@ public class SpiderHistoryServiceImpl implements SpiderHistoryService {
             OkHttpResult okHttpResult = OkHttp.doGet(url);
             if (okHttpResult.getCode() == 200) {
                 historyObjectList.addAll(getHistoryInfosExp(okHttpResult.getContent(), stockObject));
+                System.out.println(historyObjectList.get(historyObjectList.size()-1));
+                try {
+                    sleep(100000000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             try {
                 System.out.println(stockObject.getStockName() + "---------sleep");
-                Thread.sleep(500);
+                sleep(500);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -52,9 +60,9 @@ public class SpiderHistoryServiceImpl implements SpiderHistoryService {
     }
 
     private List<HistoryObject> getHistoryInfosExp(String html, StockObject stockObject) {
-        System.out.println(html);
         List<HistoryObject> historyObjectList = new ArrayList<>();
         String[] infos = html.trim().split("\\\\n\\\\\n");
+
         for(int i=0;i<infos.length-1;i++){
             if(i==0){
                 continue;
@@ -75,7 +83,6 @@ public class SpiderHistoryServiceImpl implements SpiderHistoryService {
             HistoryObject historyObject = new HistoryObject(stockObject.getStockName(), stockObject.getStockId(), openingDate, openPrice, closePrice, maxPrice, minPrice, tradeAmount);
             historyObjectList.add(historyObject);
         }
-        System.out.println(historyObjectList);
         return historyObjectList;
     }
 

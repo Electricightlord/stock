@@ -100,7 +100,6 @@ class WriteHistory extends Thread {
     private void doJob(List<StockObject> stockObjectList) {
         for (StockObject stockObject : stockObjectList) {
             CurrentObject currentObject = (CurrentObject) stringObjectRedisTemplate.opsForValue().get(stockObject.getStockId());
-            System.out.println(currentObject);
             if (currentObject == null) {
                 return;
             }

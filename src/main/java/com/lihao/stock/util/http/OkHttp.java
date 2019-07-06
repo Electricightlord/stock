@@ -45,9 +45,4 @@ public class OkHttp {
         clientBu.cookieJar(cookieJar);
         return clientBu.build();
     }
-
-    public static void main(String[] args) {
-        OkHttpResult okHttpResult=doGet("http://money.finance.sina.com.cn/corp/go.php/vMS_MarketHistory/stockid/300227.phtml?year=2018&jidu=1");
-        System.out.println(okHttpResult);
-    }
 }

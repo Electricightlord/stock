@@ -30,7 +30,6 @@ public class SpiderStockServiceImpl implements SpiderStockService {
     public boolean getStockInfos() {
         List<StockObject> stockObjectList = new ArrayList<>();
         OkHttpResult okHttpResult = OkHttp.doGet(stockInfoUrl);
-        System.out.println(okHttpResult.getContent());
         if (okHttpResult.getCode() == 200) {
             stockObjectList.addAll(getStockInfosExp(okHttpResult.getContent()));
         }

@@ -26,7 +26,6 @@ public class StockCurrentSynJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-
         String[] stockIds = stockService.getConcactIds().split(",");
         SyncJob syncJob = new SyncJob(stockIds, 0, 50, 0,stringObjectRedisTemplate);
         for (int i = 0; i < 10; i++) {
