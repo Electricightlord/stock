@@ -34,13 +34,13 @@ Redis     5.0+
 
 ##### 参数说明
 
-无参数
+- 无参数 + 
 
 ##### 请求示例
 
-path: http://localhost:8080/stock/stock/all
+- path: http://localhost:8080/stock/stock/all
 
-method: GET
+- method: GET
 
 ### 前30天涨幅超过5%的股票统计
 
@@ -54,13 +54,13 @@ method: GET
 
 ##### 参数说明
 
-无参数
+- 无参数
 
 ##### 请求示例
 
-path: http://localhost:8080/stock/history/getCount
+- path: http://localhost:8080/stock/history/getCount
 
-method: GET
+- method: GET
 
 ### 股票详情查看
 
@@ -82,6 +82,6 @@ method: GET
 
 ##### 请求示例
 
-path: http://localhost:8080/stock/history/search/sh600000/10/1
+- path: http://localhost:8080/stock/history/search/sh600000/10/1
 
-method: GET
+- method: GET
