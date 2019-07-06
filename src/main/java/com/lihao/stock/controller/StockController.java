@@ -1,8 +1,8 @@
 package com.lihao.stock.controller;
 
 import com.lihao.stock.object.StockObject;
-import com.lihao.stock.service.StockService;
-import com.lihao.stock.service.spider.SpiderStockService;
+import com.lihao.stock.service.impl.StockServiceImpl;
+import com.lihao.stock.spider.impl.SpiderStockServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +16,10 @@ import java.util.List;
 public class StockController {
 
     @Autowired
-    StockService stockService;
+    StockServiceImpl stockService;
 
     @Autowired
-    SpiderStockService spiderStockService;
+    SpiderStockServiceImpl spiderStockService;
 
     @GetMapping("/all")
     public ModelAndView getAllStocks() {

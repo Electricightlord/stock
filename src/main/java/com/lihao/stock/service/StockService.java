@@ -1,31 +1,16 @@
 package com.lihao.stock.service;
 
-import com.lihao.stock.mapper.StockMapper;
 import com.lihao.stock.object.StockObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class StockService {
+public interface StockService {
 
-    @Autowired
-    StockMapper stockMapper;
+     void insertStocks(List<StockObject> stockObjectList);
 
-    public void insertStocks(List<StockObject> stockObjectList){
-        stockMapper.insertStocks(stockObjectList);
-    }
+     List<StockObject> getAllStocks();
 
-    public List<StockObject> getAllStocks(){
-        return stockMapper.getStocks();
-    }
+     int getCount();
 
-    public int getCount(){
-        return stockMapper.getCount();
-    }
-
-    public String getConcactIds(){
-        return stockMapper.getConcatIds();
-    }
+     String getConcactIds();
 }

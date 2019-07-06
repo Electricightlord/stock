@@ -1,8 +1,8 @@
 package com.lihao.stock.listener;
 
 import com.lihao.stock.object.StockObject;
-import com.lihao.stock.service.spider.SpiderHistoryService;
-import com.lihao.stock.service.spider.SpiderStockService;
+import com.lihao.stock.spider.impl.SpiderHistoryServiceImpl;
+import com.lihao.stock.spider.impl.SpiderStockServiceImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -30,11 +30,10 @@ class SynStockHisInfo extends Thread{
     public void doSyn(){
         System.out.println("开始同步数据");
         ApplicationContext applicationContext=this.contextRefreshedEvent.getApplicationContext();
-        SpiderStockService spiderStockService=applicationContext.getBean(SpiderStockService.class);
-        SpiderHistoryService spiderHistoryService=applicationContext.getBean(SpiderHistoryService.class);
+        SpiderStockServiceImpl spiderStockService=applicationContext.getBean(SpiderStockServiceImpl.class);
+        SpiderHistoryServiceImpl spiderHistoryService=applicationContext.getBean(SpiderHistoryServiceImpl.class);
         RedisTemplate<String,Object> stringObjectRedisTemplate=(RedisTemplate<String,Object>)applicationContext.getBean("objectTemplate");
         boolean result=spiderStockService.getStockInfos();
-        System.out.println(result);
         if (result ) {
             List<StockObject> stockObjectList=(List<StockObject>)stringObjectRedisTemplate.opsForValue().get("allStockCache");
             if(stockObjectList==null){
@@ -51,6 +50,6 @@ class SynStockHisInfo extends Thread{
         System.out.println("同步数据完成");
     }
     public void run(){
-//        doSyn();
+        doSyn();
     }
 }

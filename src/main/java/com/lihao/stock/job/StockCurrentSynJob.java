@@ -1,8 +1,8 @@
 package com.lihao.stock.job;
 
 import com.lihao.stock.object.CurrentObject;
-import com.lihao.stock.service.StockService;
-import com.lihao.stock.service.spider.SpiderHistoryService;
+import com.lihao.stock.service.impl.StockServiceImpl;
+import com.lihao.stock.spider.SpiderHistoryService;
 import com.lihao.stock.util.http.OkHttp;
 import com.lihao.stock.util.http.OkHttpResult;
 import lombok.Data;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class StockCurrentSynJob extends QuartzJobBean {
 
     @Autowired
-    StockService stockService;
+    StockServiceImpl stockService;
 
     @Autowired
     RedisTemplate<String,Object> stringObjectRedisTemplate;
@@ -52,7 +52,7 @@ class SyncJob extends Thread {
 
     private RedisTemplate<String,Object> stringObjectRedisTemplate;
 
-    public SyncJob(String[] stockIds, int startIndex, int syncCountPerTime, int totalSyncCount, RedisTemplate<String,Object> stringObjectRedisTemplate) {
+    SyncJob(String[] stockIds, int startIndex, int syncCountPerTime, int totalSyncCount, RedisTemplate<String,Object> stringObjectRedisTemplate) {
         super();
         this.stockIds = stockIds;
         this.startIndex = startIndex;
@@ -71,7 +71,7 @@ class SyncJob extends Thread {
         }
     }
 
-    public boolean doSyncJob() {
+    boolean doSyncJob() {
         int endIndex;
         synchronized (this) {
             if (totalSyncCount >= size) {

@@ -1,31 +1,15 @@
 package com.lihao.stock.service;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lihao.stock.mapper.HistoryMapper;
 import com.lihao.stock.object.HistoryObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class HistoryService {
-    @Autowired
-    HistoryMapper historyMapper;
+public interface HistoryService {
+     void insertHistorys(List<HistoryObject> historyObjectList);
 
-    public void insertHistorys(List<HistoryObject> historyObjectList){
-        historyMapper.insertHistorys(historyObjectList);
-    }
+     PageInfo<HistoryObject> findByStockId(String stockId, int size, int page);
 
-    public PageInfo<HistoryObject> findByStockId(String stockId, int size, int page){
-        PageHelper.startPage(page,size);
-        return new PageInfo<>(historyMapper.findByStockId(stockId,page,size));
-    }
-
-    public List<Map<String,Object>> getCount(){
-        return historyMapper.getCount();
-    }
-
+     List<Map<String,Object>> getCount();
 }

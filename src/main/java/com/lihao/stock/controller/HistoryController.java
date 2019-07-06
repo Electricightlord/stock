@@ -2,9 +2,9 @@ package com.lihao.stock.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.lihao.stock.object.HistoryObject;
-import com.lihao.stock.service.HistoryService;
-import com.lihao.stock.service.spider.SpiderHistoryService;
-import com.lihao.stock.service.spider.SpiderStockService;
+import com.lihao.stock.service.impl.HistoryServiceImpl;
+import com.lihao.stock.spider.impl.SpiderHistoryServiceImpl;
+import com.lihao.stock.spider.impl.SpiderStockServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,17 +19,17 @@ import java.util.Map;
 @RequestMapping("/history")
 public class HistoryController {
     @Autowired
-    HistoryService historyService;
+    HistoryServiceImpl historyServiceImpl;
 
     @Autowired
-    SpiderHistoryService spiderHistoryService;
+    SpiderHistoryServiceImpl spiderHistoryService;
 
     @Autowired
-    SpiderStockService spiderStockService;
+    SpiderStockServiceImpl spiderStockService;
 
     @GetMapping("/search/{stockId}/{size}/{page}")
     public ModelAndView search(@PathVariable("stockId") String stockId, @PathVariable(value = "size") int size, @PathVariable("page") int page){
-        PageInfo<HistoryObject> pageInfo= historyService.findByStockId(stockId,size,page);
+        PageInfo<HistoryObject> pageInfo= historyServiceImpl.findByStockId(stockId,size,page);
         System.out.println(pageInfo);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("pageInfo",pageInfo);
@@ -40,7 +40,7 @@ public class HistoryController {
 
     @GetMapping("/getCount")
     public List<Map<String,Object>> getCount(){
-        return historyService.getCount();
+        return historyServiceImpl.getCount();
     }
 
 }

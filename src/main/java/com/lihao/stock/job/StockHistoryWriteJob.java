@@ -3,8 +3,8 @@ package com.lihao.stock.job;
 import com.lihao.stock.object.CurrentObject;
 import com.lihao.stock.object.HistoryObject;
 import com.lihao.stock.object.StockObject;
-import com.lihao.stock.service.HistoryService;
-import com.lihao.stock.service.StockService;
+import com.lihao.stock.service.impl.HistoryServiceImpl;
+import com.lihao.stock.service.impl.StockServiceImpl;
 import lombok.Data;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ import java.util.List;
 public class StockHistoryWriteJob extends QuartzJobBean {
 
     @Autowired
-    StockService stockService;
+    StockServiceImpl stockService;
 
     @Autowired
     RedisTemplate<String, Object> stringObjectRedisTemplate;
 
     @Autowired
-    HistoryService historyService;
+    HistoryServiceImpl historyServiceImpl;
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext)  {
@@ -40,7 +40,7 @@ public class StockHistoryWriteJob extends QuartzJobBean {
                 e.printStackTrace();
             }
         }
-        historyService.insertHistorys(syncJob.getHistoryObjectList());
+        historyServiceImpl.insertHistorys(syncJob.getHistoryObjectList());
         System.out.println("数据库写入完成");
     }
 }

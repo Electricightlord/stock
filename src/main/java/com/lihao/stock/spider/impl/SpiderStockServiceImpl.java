@@ -1,12 +1,12 @@
-package com.lihao.stock.service.spider;
+package com.lihao.stock.spider.impl;
 
 import com.lihao.stock.object.StockObject;
-import com.lihao.stock.service.StockService;
+import com.lihao.stock.service.impl.StockServiceImpl;
+import com.lihao.stock.spider.SpiderStockService;
 import com.lihao.stock.util.http.OkHttp;
 import com.lihao.stock.util.http.OkHttpResult;
 import com.lihao.stock.util.xpath.NXpathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
@@ -17,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SpiderStockService {
+public class SpiderStockServiceImpl implements SpiderStockService {
 
     @Autowired
     RedisTemplate<String,Object> redisTemplate;
 
     @Autowired
-    StockService stockService;
+    StockServiceImpl stockService;
 
     private final static String stockInfoUrl = "http://quote.stockstar.com/stock/stock_index.htm";
 
