@@ -10,17 +10,25 @@ MySql    5.7+
 
 Redis     5.0+
 
+
+
 ## 功能
 
 - 启动时同步数据 - 使用spring boot框架的事件机制，在所有bean初始化完成后，开始同步股票信息及历史数据到数据库中
 - 定时任务 - 使用Quartz库，实现当前股票数据定时更新
 - 数据缓存 - 使用redis缓存数据库
 
+
+
 ## 安装与部署
 
 经maven编译后，直接通过 java -jar 项目名称.jar 运行
 
+
+
 ## 接口说明
+
+
 
 ### 获得所有股票的名称以及股票id
 
@@ -42,6 +50,8 @@ Redis     5.0+
 
 - method: GET
 
+
+
 ### 前30天涨幅超过5%的股票统计
 
 ##### 请求URL
@@ -61,6 +71,8 @@ Redis     5.0+
 - path: http://localhost:8080/stock/history/getCount
 
 - method: GET
+
+
 
 ### 股票详情查看
 
