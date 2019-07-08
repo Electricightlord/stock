@@ -26,7 +26,7 @@ mysql 需设置ip:127.0.0.1 port:3306
 
 redis 需设置ip:127.0.0.1 port:6379
 
-经maven编译后，直接通过 java -jar 项目名称.jar 运行
+经maven编译后，通过 java -jar 项目名称.jar 运行
 
 
 
