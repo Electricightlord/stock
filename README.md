@@ -29,6 +29,9 @@ redis 需设置ip:127.0.0.1 port:6379
 经maven编译后，直接通过 java -jar 项目名称.jar 运行
 
 
+
+或者在/docker目录下，直接运行./init.sh脚本启动
+
 ## 接口说明
 
 
@@ -50,7 +53,6 @@ redis 需设置ip:127.0.0.1 port:6379
 ##### 请求示例
 
 - path: http://localhost:8080/stock/stock/all
-
 - method: GET
 
 
@@ -72,7 +74,6 @@ redis 需设置ip:127.0.0.1 port:6379
 ##### 请求示例
 
 - path: http://localhost:8080/stock/history/getCount
-
 - method: GET
 
 
@@ -98,5 +99,4 @@ redis 需设置ip:127.0.0.1 port:6379
 ##### 请求示例
 
 - path: http://localhost:8080/stock/history/search/sh600000/10/1
-
 - method: GET
