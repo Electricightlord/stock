@@ -112,7 +112,7 @@ class SyncJob extends Thread {
                     currentObject.setOpeningDate(SpiderHistoryService.stringToDate(historyInfo[30],"yyyy-MM-dd"));
                     stringObjectRedisTemplate.opsForValue().set(currentObject.getStockId(), currentObject);
                 }catch (Exception e){
-                    System.out.println(result);
+                    System.out.println("无法获取信息"+result);
                 }
             }
         }

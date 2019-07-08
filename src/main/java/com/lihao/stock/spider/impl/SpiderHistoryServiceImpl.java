@@ -27,6 +27,7 @@ public class SpiderHistoryServiceImpl implements SpiderHistoryService {
             List<HistoryObject> singleHistoryObjectList = new ArrayList<>();
             singleHistoryObjectList = getHistoryInfo(stockObject);
             if (singleHistoryObjectList.size() != 0) {
+                System.out.println("插入股票历史信息");
                 historyServiceImpl.insertHistorys(singleHistoryObjectList);
             }
         }
@@ -43,11 +44,6 @@ public class SpiderHistoryServiceImpl implements SpiderHistoryService {
             if (okHttpResult.getCode() == 200) {
                 historyObjectList.addAll(getHistoryInfosExp(okHttpResult.getContent(), stockObject));
                 System.out.println(historyObjectList.get(historyObjectList.size()-1));
-                try {
-                    sleep(100000000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
             try {
                 System.out.println(stockObject.getStockName() + "---------sleep");

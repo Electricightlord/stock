@@ -36,6 +36,7 @@ public class SpiderStockServiceImpl implements SpiderStockService {
         if(stockObjectList.size()!=0) {
             stockService.insertStocks(stockObjectList);
             redisTemplate.opsForValue().set("allStock",stockObjectList);
+            System.out.println("股票信息下载完成，开始下载股票历史信息");
             return true;
         }
         return false;

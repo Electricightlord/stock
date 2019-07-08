@@ -35,7 +35,8 @@ class SynStockHisInfo extends Thread{
         RedisTemplate<String,Object> stringObjectRedisTemplate=(RedisTemplate<String,Object>)applicationContext.getBean("objectTemplate");
         boolean result=spiderStockService.getStockInfos();
         if (result) {
-            List<StockObject> stockObjectList=(List<StockObject>)stringObjectRedisTemplate.opsForValue().get("allStockCache");
+            System.out.println(result);
+            List<StockObject> stockObjectList=(List<StockObject>)stringObjectRedisTemplate.opsForValue().get("allStock");
             if(stockObjectList==null){
                 return;
             }
@@ -52,6 +53,6 @@ class SynStockHisInfo extends Thread{
 
     @Override
     public void run(){
-//        doSyn();
+        doSyn();
     }
 }
