@@ -1,0 +1,41 @@
+version: "3"
+services:
+  java:
+    image: java:v1.0
+    ports:
+      - 8080:8080
+    networks:
+      default:
+        ipv4_address: 172.18.0.2
+    depends_on:
+      - redis
+      - mysql
+    command:
+      - /bin/bash
+      - -c
+      - java -jar -Dfile.encoding=UTF8 -Dspring.redis.host=172.18.0.3 -Dspring.redis.port=6379 -Dspring.datasource.url=jdbc:mysql://172.18.0.4:3306/stock?serverTimezone=Asia/Shanghai /var/stock-0.0.1-SNAPSHOT.jar
+    environment:
+      - JAVA_TOOL_OPTIONS=-Dfile=encoding=UTF8
+
+  redis:
+    image: redis:v1.0
+    ports:
+      - 6379:6379
+    networks:
+      default:
+        ipv4_address: 172.18.0.3
+
+  mysql:
+    image: mysql:v1.0
+    ports:
+      - 3306:3306
+    networks:
+      default:
+        ipv4_address: 172.18.0.4
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+
+networks:
+  default:
+    external:
+      name: mynetwork
