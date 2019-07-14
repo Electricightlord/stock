@@ -30,8 +30,19 @@ public class StockCurrentSynJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        String[] stockIds = stockService.getConcactIds().split(",");
-        SyncJob syncJob = new SyncJob(stockIds, 0, 50, 0, stringObjectRedisTemplate);
+        System.out.println("stockService"+stockService);
+        String concactIds=stockService.getConcactIds();
+        System.out.println("concactIds:"+concactIds);
+        String[] stockIds = concactIds.split(",");
+        while (stockIds.length==0){
+            try {
+                Thread.sleep(30000);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            stockIds=stockService.getConcactIds().split(",");
+        }
+        SyncJob syncJob = new SyncJob(stockIds, stringObjectRedisTemplate);
         for (int i = 0; i < 5; i++) {
             threadPoolExecutor.execute(syncJob);
         }
@@ -53,12 +64,12 @@ class SyncJob extends Thread {
 
     private RedisTemplate<String, Object> stringObjectRedisTemplate;
 
-    SyncJob(String[] stockIds, int startIndex, int syncCountPerTime, int totalSyncCount, RedisTemplate<String, Object> stringObjectRedisTemplate) {
+    SyncJob(String[] stockIds, RedisTemplate<String, Object> stringObjectRedisTemplate) {
         super();
         this.stockIds = stockIds;
-        this.startIndex = startIndex;
-        this.syncCountPerTime = syncCountPerTime;
-        this.totalSyncCount = totalSyncCount;
+        this.startIndex = 0;
+        this.syncCountPerTime = 50;
+        this.totalSyncCount = 0;
         this.size = stockIds.length;
         this.stringObjectRedisTemplate = stringObjectRedisTemplate;
     }
@@ -75,23 +86,15 @@ class SyncJob extends Thread {
     boolean doSyncJob() {
         int startIndexCurrentThread;
         int endIndex;
-        //TODO 获得当前线程需要同步的股票信息
+        //TODO 获得当前线程需要下载的股票信息
         synchronized (this) {
             if (totalSyncCount >= size) {
                 return true;
             }
             startIndex = this.totalSyncCount;
             endIndex = startIndex + syncCountPerTime >= size ? size : startIndex + syncCountPerTime;
-
             totalSyncCount = endIndex;
             startIndexCurrentThread=startIndex;
-            if (startIndex >= endIndex) {
-                System.out.println("totalSynCount:" + totalSyncCount);
-                System.out.println("size:" + size);
-                System.out.println("startIndex:" + startIndex);
-                System.out.println("totalSyncCount:" + totalSyncCount);
-                System.out.println("endIndex:" + endIndex);
-            }
         }
         //TODO 开始同步信息
         try {

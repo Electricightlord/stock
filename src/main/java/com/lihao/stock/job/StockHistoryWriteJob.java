@@ -34,18 +34,29 @@ public class StockHistoryWriteJob extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext jobExecutionContext)  {
         System.out.println("开始写入数据库");
         List<StockObject> stockObjectList = stockService.getAllStocks();
+        while(stockObjectList.size()==0){
+            try {
+                Thread.sleep(60000);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            stockObjectList=stockService.getAllStocks();
+        }
         System.out.println("需要写入的数据条数:"+stockObjectList.size());
         CountDownLatch countDownLatch=new CountDownLatch(5);
-        WriteHistory syncJob = new WriteHistory(stockObjectList, 0, 50, 0, stringObjectRedisTemplate,countDownLatch);
-        for (int i = 0; i < 5; i++) {
-            threadPoolExecutor.execute(syncJob);
-        }
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        WriteHistory syncJob = new WriteHistory(stockObjectList, stringObjectRedisTemplate,countDownLatch);
         List<HistoryObject> historyObjectList=syncJob.getHistoryObjectList();
+        while(historyObjectList.size()==0) {
+            for (int i = 0; i < 5; i++) {
+                threadPoolExecutor.execute(syncJob);
+            }
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            historyObjectList=syncJob.getHistoryObjectList();
+        }
         System.out.println("写入数据库的信息条数:"+historyObjectList.size());
         historyServiceImpl.insertHistorys(historyObjectList);
         System.out.println("数据库写入完成");
@@ -72,12 +83,12 @@ class WriteHistory extends Thread {
 
     private Vector<HistoryObject> historyObjectList = new Vector<>();
 
-    public WriteHistory(List<StockObject> stockObjectList, int startIndex, int writeCountPerTime, int totalWriteCount, RedisTemplate<String, Object> stringObjectRedisTemplate,CountDownLatch countDownLatch) {
+    public WriteHistory(List<StockObject> stockObjectList, RedisTemplate<String, Object> stringObjectRedisTemplate,CountDownLatch countDownLatch) {
         super();
         this.stockObjectList = stockObjectList;
-        this.startIndex = startIndex;
-        this.writeCountPerTime = writeCountPerTime;
-        this.totalWriteCount = totalWriteCount;
+        this.startIndex = 0;
+        this.writeCountPerTime = 50;
+        this.totalWriteCount = 0;
         this.size = stockObjectList.size();
         this.stringObjectRedisTemplate = stringObjectRedisTemplate;
         this.countDownLatch=countDownLatch;
