@@ -33,15 +33,16 @@ public class StockCurrentSynJob extends QuartzJobBean {
         System.out.println("stockService"+stockService);
         String concactIds=stockService.getConcactIds();
         System.out.println("concactIds:"+concactIds);
-        String[] stockIds = concactIds.split(",");
-        while (stockIds.length==0){
+
+        while (concactIds==null){
             try {
-                Thread.sleep(30000);
+                Thread.sleep(2000);
             }catch (Exception e){
                 e.printStackTrace();
             }
-            stockIds=stockService.getConcactIds().split(",");
+            concactIds=stockService.getConcactIds();
         }
+        String[] stockIds = concactIds.split(",");
         SyncJob syncJob = new SyncJob(stockIds, stringObjectRedisTemplate);
         for (int i = 0; i < 5; i++) {
             threadPoolExecutor.execute(syncJob);
