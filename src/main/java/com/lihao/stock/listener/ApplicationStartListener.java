@@ -53,6 +53,6 @@ class SynStockHisInfo extends Thread{
 
     @Override
     public void run(){
-        doSyn();
+//        doSyn();
     }
 }

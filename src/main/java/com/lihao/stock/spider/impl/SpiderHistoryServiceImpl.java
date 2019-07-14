@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-
 @Service
 public class SpiderHistoryServiceImpl implements SpiderHistoryService {
 
@@ -43,13 +41,6 @@ public class SpiderHistoryServiceImpl implements SpiderHistoryService {
             OkHttpResult okHttpResult = OkHttp.doGet(url);
             if (okHttpResult.getCode() == 200) {
                 historyObjectList.addAll(getHistoryInfosExp(okHttpResult.getContent(), stockObject));
-                System.out.println(historyObjectList.get(historyObjectList.size()-1));
-            }
-            try {
-                System.out.println(stockObject.getStockName() + "---------sleep");
-                sleep(500);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
         return historyObjectList;
@@ -81,7 +72,4 @@ public class SpiderHistoryServiceImpl implements SpiderHistoryService {
         }
         return historyObjectList;
     }
-
-
-
 }

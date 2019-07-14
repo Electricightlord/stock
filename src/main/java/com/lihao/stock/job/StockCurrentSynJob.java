@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,16 +23,17 @@ public class StockCurrentSynJob extends QuartzJobBean {
     StockServiceImpl stockService;
 
     @Autowired
-    RedisTemplate<String,Object> stringObjectRedisTemplate;
+    RedisTemplate<String, Object> stringObjectRedisTemplate;
+
+    @Autowired
+    ThreadPoolExecutor threadPoolExecutor;
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         String[] stockIds = stockService.getConcactIds().split(",");
-        SyncJob syncJob = new SyncJob(stockIds, 0, 50, 0,stringObjectRedisTemplate);
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(syncJob);
-            thread.setName(String.valueOf(i));
-            thread.start();
+        SyncJob syncJob = new SyncJob(stockIds, 0, 50, 0, stringObjectRedisTemplate);
+        for (int i = 0; i < 5; i++) {
+            threadPoolExecutor.execute(syncJob);
         }
     }
 }
@@ -49,39 +51,55 @@ class SyncJob extends Thread {
     //ids集合大小
     private int size;
 
-    private RedisTemplate<String,Object> stringObjectRedisTemplate;
+    private RedisTemplate<String, Object> stringObjectRedisTemplate;
 
-    SyncJob(String[] stockIds, int startIndex, int syncCountPerTime, int totalSyncCount, RedisTemplate<String,Object> stringObjectRedisTemplate) {
+    SyncJob(String[] stockIds, int startIndex, int syncCountPerTime, int totalSyncCount, RedisTemplate<String, Object> stringObjectRedisTemplate) {
         super();
         this.stockIds = stockIds;
         this.startIndex = startIndex;
         this.syncCountPerTime = syncCountPerTime;
         this.totalSyncCount = totalSyncCount;
         this.size = stockIds.length;
-        this.stringObjectRedisTemplate=stringObjectRedisTemplate;
-        System.out.println(this.size);
+        this.stringObjectRedisTemplate = stringObjectRedisTemplate;
     }
 
     @Override
     public void run() {
-        boolean isDown = false;
-        while (!isDown) {
-            isDown = doSyncJob();
+        System.out.println("线程id" + Thread.currentThread().getId() + "启动");
+        boolean isDone = false;
+        while (!isDone) {
+            isDone = doSyncJob();
         }
     }
 
     boolean doSyncJob() {
+        int startIndexCurrentThread;
         int endIndex;
+        //TODO 获得当前线程需要同步的股票信息
         synchronized (this) {
             if (totalSyncCount >= size) {
                 return true;
             }
             startIndex = this.totalSyncCount;
             endIndex = startIndex + syncCountPerTime >= size ? size : startIndex + syncCountPerTime;
+
             totalSyncCount = endIndex;
+            startIndexCurrentThread=startIndex;
+            if (startIndex >= endIndex) {
+                System.out.println("totalSynCount:" + totalSyncCount);
+                System.out.println("size:" + size);
+                System.out.println("startIndex:" + startIndex);
+                System.out.println("totalSyncCount:" + totalSyncCount);
+                System.out.println("endIndex:" + endIndex);
+            }
         }
-        //TODO 同步信息
-        doJob(Arrays.copyOfRange(stockIds, startIndex, endIndex));
+        //TODO 开始同步信息
+        try {
+            doJob(Arrays.copyOfRange(stockIds, startIndexCurrentThread, endIndex));
+        } catch (Exception e) {
+            System.out.println("线程id" + Thread.currentThread().getId() +"startCurrentIndex:"+startIndexCurrentThread);
+        }
+
         return false;
     }
 
@@ -95,8 +113,8 @@ class SyncJob extends Thread {
         for (String result : results) {
             Matcher m = p.matcher(result);
             if (m.find()) {
-                if (m.groupCount()!=4){
-                    return ;
+                if (m.groupCount() != 4) {
+                    return;
                 }
                 CurrentObject currentObject = new CurrentObject();
                 currentObject.setStockId(m.group(1));
@@ -109,14 +127,12 @@ class SyncJob extends Thread {
                     currentObject.setMaxPrice(Double.valueOf(historyInfo[4]));
                     currentObject.setMinPrice(Double.valueOf(historyInfo[5]));
                     currentObject.setTradeAmount(Integer.valueOf(historyInfo[8]));
-                    currentObject.setOpeningDate(SpiderHistoryService.stringToDate(historyInfo[30],"yyyy-MM-dd"));
+                    currentObject.setOpeningDate(SpiderHistoryService.stringToDate(historyInfo[30], "yyyy-MM-dd"));
                     stringObjectRedisTemplate.opsForValue().set(currentObject.getStockId(), currentObject);
-                }catch (Exception e){
-                    System.out.println("无法获取信息"+result);
+                } catch (Exception e) {
+                    System.out.println("无法获取信息" + result);
                 }
             }
         }
     }
 }
-
-

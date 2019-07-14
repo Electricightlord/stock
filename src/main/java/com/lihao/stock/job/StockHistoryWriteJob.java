@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class StockHistoryWriteJob extends QuartzJobBean {
 
@@ -25,22 +27,27 @@ public class StockHistoryWriteJob extends QuartzJobBean {
     @Autowired
     HistoryServiceImpl historyServiceImpl;
 
+    @Autowired
+    ThreadPoolExecutor threadPoolExecutor;
+
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext)  {
         System.out.println("开始写入数据库");
         List<StockObject> stockObjectList = stockService.getAllStocks();
-        WriteHistory syncJob = new WriteHistory(stockObjectList, 0, 50, 0, stringObjectRedisTemplate);
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(syncJob);
-            thread.setName(String.valueOf(i));
-            thread.start();
-            try {
-                thread.join();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        System.out.println("需要写入的数据条数:"+stockObjectList.size());
+        CountDownLatch countDownLatch=new CountDownLatch(5);
+        WriteHistory syncJob = new WriteHistory(stockObjectList, 0, 50, 0, stringObjectRedisTemplate,countDownLatch);
+        for (int i = 0; i < 5; i++) {
+            threadPoolExecutor.execute(syncJob);
         }
-        historyServiceImpl.insertHistorys(syncJob.getHistoryObjectList());
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<HistoryObject> historyObjectList=syncJob.getHistoryObjectList();
+        System.out.println("写入数据库的信息条数:"+historyObjectList.size());
+        historyServiceImpl.insertHistorys(historyObjectList);
         System.out.println("数据库写入完成");
     }
 }
@@ -60,10 +67,12 @@ class WriteHistory extends Thread {
 
     private RedisTemplate<String, Object> stringObjectRedisTemplate;
 
+    private CountDownLatch countDownLatch;
 
-    private List<HistoryObject> historyObjectList = new ArrayList<>();
 
-    public WriteHistory(List<StockObject> stockObjectList, int startIndex, int writeCountPerTime, int totalWriteCount, RedisTemplate<String, Object> stringObjectRedisTemplate) {
+    private Vector<HistoryObject> historyObjectList = new Vector<>();
+
+    public WriteHistory(List<StockObject> stockObjectList, int startIndex, int writeCountPerTime, int totalWriteCount, RedisTemplate<String, Object> stringObjectRedisTemplate,CountDownLatch countDownLatch) {
         super();
         this.stockObjectList = stockObjectList;
         this.startIndex = startIndex;
@@ -71,19 +80,22 @@ class WriteHistory extends Thread {
         this.totalWriteCount = totalWriteCount;
         this.size = stockObjectList.size();
         this.stringObjectRedisTemplate = stringObjectRedisTemplate;
+        this.countDownLatch=countDownLatch;
     }
 
     @Override
     public void run() {
-        boolean isDown = false;
-        while (!isDown) {
-            isDown = doSyncJob();
+        boolean isDone = false;
+        while (!isDone) {
+            isDone = doSyncJob();
         }
-
+        countDownLatch.countDown();
     }
 
     public boolean doSyncJob() {
+        int startIndexCurrentThread;
         int endIndex;
+        //TODO 获得当前线程需要同步的股票信息
         synchronized (this) {
             if (totalWriteCount >= size) {
                 return true;
@@ -91,9 +103,10 @@ class WriteHistory extends Thread {
             startIndex = this.totalWriteCount;
             endIndex = startIndex + writeCountPerTime >= size ? size : startIndex + writeCountPerTime;
             totalWriteCount = endIndex;
+            startIndexCurrentThread=startIndex;
         }
-        //TODO 同步信息
-        doJob(stockObjectList.subList(startIndex, endIndex));
+        //TODO 开始同步信息
+        doJob(stockObjectList.subList(startIndexCurrentThread, endIndex));
         return false;
     }
 
