@@ -49,7 +49,10 @@ from HAND_STUDENT_CORE a
 7
 
 ```mysql
-select COURSE_NO,CORE from HAND_STUDENT_CORE group by COURSE_NO,CORE order by CORE desc ;
+select STUDENT_NO,COURSE_NO, CORE
+from HAND_STUDENT_CORE
+group by COURSE_NO,STUDENT_NO
+order by COURSE_NO,CORE desc;
 ```
 
 8
