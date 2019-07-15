@@ -22,7 +22,7 @@ public class ApplicationStartListener implements ApplicationListener<ContextRefr
         RedisTemplate<String, Object> stringObjectRedisTemplate = (RedisTemplate<String, Object>) applicationContext.getBean("objectTemplate");
 
         boolean result = spiderStockService.getStockInfos();
-//        result=false;
+        result=false;
         if (result) {
             SynStockHisInfo synStockHisInfo = new SynStockHisInfo(spiderHistoryService, stringObjectRedisTemplate);
             for (int i = 0; i < 5; i++) {
